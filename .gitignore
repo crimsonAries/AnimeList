@@ -7,5 +7,7 @@ __pycache__/
 *.spec
 *.log
 *.exe
+!release/AnimeList_v4.exe
 *.exe.bak
 *.part
+release/date/
