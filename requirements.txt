@@ -1,0 +1,5 @@
+# AnimeList_v4.4 运行时依赖（Python 3.12 x64）
+requests==2.34.2
+beautifulsoup4==4.15.0
+pywebview==6.2.1
+urllib3==2.8.0

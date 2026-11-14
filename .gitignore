@@ -1,0 +1,11 @@
+.venv/
+date/
+dist/
+build/
+__pycache__/
+*.py[cod]
+*.spec
+*.log
+*.exe
+*.exe.bak
+*.part
