@@ -2,6 +2,8 @@
 
 AnimeList 是一个面向 Bangumi 用户的 Windows 桌面番剧榜单与追番管理工具，基于 Python、pywebview 和本地归档数据构建。
 
+从 [Releases](https://github.com/crimsonAries/AnimeList/releases) 下载 `AnimeList_v4.4-full-win64.zip`，解压后直接运行 `AnimeList_v4.exe`。完整包已包含截止 2026-11-10 的本地榜单数据，无需首次下载归档。仓库只提供源码，程序与数据统一通过 Releases 分发。
+
 ## 功能
 
 - 综合排名、评分排名、热度排名三张季度榜单
@@ -18,18 +20,6 @@ AnimeList 是一个面向 Bangumi 用户的 Windows 桌面番剧榜单与追番�
 - Windows 10 / 11 x64
 - Microsoft Edge WebView2 Runtime
 - Python 3.12（仅源码运行或自行打包时需要）
-
-## 直接下载使用
-
-从 [Releases](https://github.com/crimsonAries/AnimeList/releases) 下载最新的完整包：
-
-```text
-AnimeList_v4.4-full-win64.zip
-```
-
-解压后直接运行 `AnimeList_v4.exe`。完整包已包含截止 2026-11-10 的本地榜单数据，无需首次下载归档。
-
-> 仓库中的 `release/AnimeList_v4.exe` 仅提供程序本体，不含数据；离线使用请下载完整包。
 
 ## 源码运行
 
@@ -67,7 +57,7 @@ powershell -ExecutionPolicy Bypass -File .\package_release.ps1
 - 榜单、人物与角色数据来自 [bangumi/Archive](https://github.com/bangumi/Archive)。
 - 新番排期数据来自 Bangumi 日历与 Yuc.wiki。
 - 仓库本身不包含榜单数据、用户观看记录或个人补番计划；完整数据包仅随 GitHub Release 发布。
-- 使用完整包时数据已就绪；源码运行或仅使用 `release/AnimeList_v4.exe` 时，首次启动或点击“更新数据”会下载约 450 MB 的归档包，并在软件同目录生成 `date/`。
+- 使用完整包时数据已就绪；源码运行时，首次启动或点击“更新数据”会下载约 450 MB 的归档包，并在软件同目录生成 `date/`。
 - 完整包中的 `date/local_data.json` 已移除个人补番计划与手动排期，`app_state.json` 已移除用户名。
 - 本项目与 Bangumi 官方无隶属关系；数据版权归 Bangumi 及贡献者所有。
 
@@ -82,8 +72,6 @@ package_release.ps1     完整发布包快捷脚本
 requirements.txt        运行时依赖
 requirements-dev.txt    开发/打包依赖
 bgm.ico                 项目图标
-release/
-  AnimeList_v4.exe      可直接运行的程序（不含数据）
 date/                   本地运行时数据（不提交）
 dist/                   打包产物（不提交）
 ```
