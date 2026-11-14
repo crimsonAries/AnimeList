@@ -269,6 +269,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 5px;
             border-top: 1px solid #cccccc;
             padding: 0 2px;
             font-size: 11px;
@@ -277,6 +278,11 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        .tip-weekly-title { white-space: nowrap; }
+        /* 每个指标作为一个整体，块之间由 footer 的 gap 统一分隔 */
+        .tip-weekly-metric { display: inline-flex; align-items: baseline; white-space: nowrap; }
+        .tip-weekly-value { display: inline-flex; align-items: baseline; margin-left: 2px; }
+        .tip-weekly-empty { margin-left: 2px; }
         /* 周对比底栏始终保留灰色顶部分隔线，与上方的六维底栏/详细数据分开 */
         body.dark-theme .tip-weekly-footer { border-top-color: #4d4d4d; color: #cccccc; }
         .tip-radar { display: flex; align-items: center; justify-content: center; aspect-ratio: 1 / 1; }
@@ -4852,33 +4858,54 @@ body.sel-rank.h-axis #mark-range-box-top, body.sel-rank.h-axis #mark-range-box-b
 
         // 周对比底栏：评分变动 + 热度增长（绝对人数），始终位于提示框最下方
         function appendWeeklyMetric(foot, label, value, digits, zeroText) {
-            foot.appendChild(document.createTextNode(label));
+            const metric = document.createElement('span');
+            metric.className = 'tip-weekly-metric';
+            const labelEl = document.createElement('span');
+            labelEl.className = 'tip-weekly-label';
+            labelEl.textContent = label;
+            metric.appendChild(labelEl);
+
             const n = Number(value);
             if (!isFinite(n)) {
-                foot.appendChild(document.createTextNode(' —'));
+                const empty = document.createElement('span');
+                empty.className = 'tip-weekly-empty';
+                empty.textContent = '—';
+                metric.appendChild(empty);
+                foot.appendChild(metric);
                 return;
             }
             const factor = digits ? 100 : 1;
             const rounded = Math.round(n * factor) / factor;
             if (rounded === 0) {
-                foot.appendChild(document.createTextNode(zeroText));
+                const zero = document.createElement('span');
+                zero.className = 'tip-weekly-zero';
+                zero.textContent = zeroText;
+                metric.appendChild(zero);
+                foot.appendChild(metric);
                 return;
             }
-            foot.appendChild(document.createTextNode(' '));
+            const valueEl = document.createElement('span');
+            valueEl.className = 'tip-weekly-value';
             const sign = document.createElement('span');
+            sign.className = 'tip-weekly-sign';
             sign.textContent = rounded > 0 ? '+' : '-';
-            foot.appendChild(sign);
+            valueEl.appendChild(sign);
             const num = document.createElement('span');
+            num.className = 'tip-weekly-number';
             tagNumber(num, Math.abs(rounded), digits ? 'num3' : 'int', '');
-            foot.appendChild(num);
+            valueEl.appendChild(num);
+            metric.appendChild(valueEl);
+            foot.appendChild(metric);
         }
 
         function buildWeeklyFooter(scoreDelta, popDelta, popPct, prevPop, prevScore) {
             const foot = document.createElement('div');
             foot.className = 'tip-weekly-footer';
-            foot.appendChild(document.createTextNode('较上周 '));
+            const title = document.createElement('span');
+            title.className = 'tip-weekly-title';
+            title.textContent = '较上周';
+            foot.appendChild(title);
             appendWeeklyMetric(foot, '评分', scoreDelta, 2, '不变');
-            foot.appendChild(document.createTextNode(' '));
             appendWeeklyMetric(foot, '热度', popDelta, 0, '不增');
             const tips = [];
             if (scoreDelta != null && prevScore != null) {
