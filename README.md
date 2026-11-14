@@ -2,7 +2,7 @@
 
 AnimeList 是一个面向 Bangumi 用户的 Windows 桌面番剧榜单与追番管理工具，基于 Python、pywebview 和本地归档数据构建。
 
-从 [Releases](https://github.com/crimsonAries/AnimeList/releases) 下载 `AnimeList_v4.4-full-win64.zip`，解压后直接运行 `AnimeList_v4.exe`。完整包已包含截止 2026-11-10 的本地榜单数据，无需首次下载归档。仓库只提供源码，程序与数据统一通过 Releases 分发。
+从 [Releases](https://github.com/crimsonAries/AnimeList/releases) 下载 `AnimeList_v4.4-full-win64.zip`，解压后直接运行 `AnimeList_v4.exe`。完整包已包含截止 2026-11-10 的本地榜单数据，无需首次下载归档。仓库提供源码和程序本体，完整数据包通过 Releases 分发。
 
 ## 功能
 
@@ -29,7 +29,7 @@ cd AnimeList
 
 python -m venv .venv
 .\.venv\Scripts\python -m pip install -U pip
-.\.venv\Scripts\pip install -r requirements.txt
+.\.venv\Scripts\pip install -r requirements/runtime.txt
 
 .\.venv\Scripts\python main.py
 ```
@@ -37,20 +37,20 @@ python -m venv .venv
 ## 构建 Windows exe
 
 ```powershell
-.\.venv\Scripts\pip install -r requirements-dev.txt
-powershell -ExecutionPolicy Bypass -File .\build.ps1
+.\.venv\Scripts\pip install -r requirements/dev.txt
+powershell -ExecutionPolicy Bypass -File .\tools\build.ps1
 ```
 
-产物位于 `dist\AnimeList_v4.exe`。如在新目录运行，请把 `date\` 数据目录一并复制过去。
+产物位于 `dist\AnimeList_v4.exe`，并自动复制到根目录 `AnimeList_v4.exe`。
 
 ## 发布完整包
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\build.ps1
-powershell -ExecutionPolicy Bypass -File .\package_release.ps1
+powershell -ExecutionPolicy Bypass -File .\tools\build.ps1
+.\.venv\Scripts\python tools\package_release.py
 ```
 
-生成 `dist\AnimeList_v4.4-full-win64.zip`，包含 exe、清洁后的本地数据、README、LICENSE 和第三方声明。
+生成 `dist\AnimeList_v4.4-full-win64.zip`，包含 exe、清洁后的本地数据、README 和 LICENSE。
 
 ## 数据说明
 
@@ -66,12 +66,16 @@ powershell -ExecutionPolicy Bypass -File .\package_release.ps1
 ```text
 main.py                 Python 主程序与后端接口
 index.html              前端界面
-build.ps1               一键打包 exe
-package_release.py      生成带清洁数据的完整发布包
-package_release.ps1     完整发布包快捷脚本
-requirements.txt        运行时依赖
-requirements-dev.txt    开发/打包依赖
 bgm.ico                 项目图标
+AnimeList_v4.exe        程序本体（不含数据）
+README.md               项目说明与第三方依赖
+LICENSE                 GPL-3.0 许可证
+requirements/
+  runtime.txt           运行时依赖
+  dev.txt               开发/打包依赖
+tools/
+  build.ps1             构建 exe
+  package_release.py    生成带清洁数据的完整发布包
 date/                   本地运行时数据（不提交）
 dist/                   打包产物（不提交）
 ```
@@ -82,6 +86,49 @@ dist/                   打包产物（不提交）
 
 Copyright (C) 2026 AnimeList contributors
 
-## 第三方组件
+## 第三方依赖与数据来源
 
-依赖、运行时组件与数据来源说明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+### Python 依赖
+
+| 组件 | 许可证 |
+|---|---|
+| requests | Apache-2.0 |
+| urllib3 | MIT |
+| certifi | MPL-2.0 |
+| charset-normalizer | MIT |
+| idna | BSD-3-Clause |
+| beautifulsoup4 | MIT |
+| soupsieve | MIT |
+| pywebview | BSD-3-Clause |
+| pythonnet | MIT |
+| clr-loader | MIT |
+| cffi | MIT |
+| bottle | MIT |
+| proxy_tools | MIT |
+| typing_extensions | PSF-2.0 |
+
+完整许可证文本随各依赖包分发，也可在对应上游项目获取。
+
+### 构建工具
+
+| 组件 | 许可证 |
+|---|---|
+| PyInstaller | GPL-2.0-or-later，含 bootloader 例外 |
+
+PyInstaller 的例外条款允许分发其打包的应用程序，详见 PyInstaller 许可证。
+
+### 运行时组件
+
+- **Microsoft Edge WebView2 Runtime**：pywebview 在 Windows 上使用，受 Microsoft 分发条款约束。
+- **Python 3.12**：打包后的 exe 内含 Python 运行时，受 Python Software Foundation License 约束。
+
+### 数据来源
+
+- 动画、角色、人物与榜单数据：[bangumi/Archive](https://github.com/bangumi/Archive)。
+- 新番排期数据：Bangumi 日历与 Yuc.wiki。
+
+下载的归档数据不包含在源码仓库中；数据版权与使用条款归 Bangumi 及对应贡献者，本项目与 Bangumi 官方无隶属关系。
+
+### 项目图标
+
+`bgm.ico` 作为项目资源包含在仓库中。

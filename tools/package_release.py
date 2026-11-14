@@ -1,16 +1,15 @@
 import json
-import os
 import shutil
 import zipfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
-EXE = ROOT / "dist" / "AnimeList_v4.exe"
+ROOT = Path(__file__).resolve().parent.parent
+EXE = ROOT / "AnimeList_v4.exe"
 DATE = ROOT / "date"
 STAGE_NAME = "AnimeList_v4.4-full-win64"
 STAGE = ROOT / "dist" / STAGE_NAME
 ZIP_PATH = ROOT / "dist" / (STAGE_NAME + ".zip")
-DOCS = ["README.md", "LICENSE", "THIRD_PARTY_NOTICES.md"]
+DOCS = ["README.md", "LICENSE"]
 
 
 def load_json(path):
@@ -25,7 +24,7 @@ def save_json(path, data):
 
 def main():
     if not EXE.exists():
-        raise SystemExit("dist/AnimeList_v4.exe not found. Run build.ps1 first.")
+        raise SystemExit("AnimeList_v4.exe not found. Run tools/build.ps1 first.")
 
     if STAGE.exists():
         shutil.rmtree(STAGE)
