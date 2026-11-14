@@ -4851,20 +4851,49 @@ body.sel-rank.h-axis #mark-range-box-top, body.sel-rank.h-axis #mark-range-box-b
         }
 
         // 周对比底栏：评分变动 + 热度增长（绝对人数），始终位于提示框最下方
+        function appendWeeklyMetric(foot, label, value, digits, zeroText) {
+            foot.appendChild(document.createTextNode(label));
+            const n = Number(value);
+            if (!isFinite(n)) {
+                foot.appendChild(document.createTextNode(' —'));
+                return;
+            }
+            const factor = digits ? 100 : 1;
+            const rounded = Math.round(n * factor) / factor;
+            if (rounded === 0) {
+                foot.appendChild(document.createTextNode(zeroText));
+                return;
+            }
+            foot.appendChild(document.createTextNode(' '));
+            const sign = document.createElement('span');
+            sign.textContent = rounded > 0 ? '+' : '-';
+            foot.appendChild(sign);
+            const num = document.createElement('span');
+            tagNumber(num, Math.abs(rounded), digits ? 'num3' : 'int', '');
+            foot.appendChild(num);
+        }
+
         function buildWeeklyFooter(scoreDelta, popDelta, popPct, prevPop, prevScore) {
             const foot = document.createElement('div');
             foot.className = 'tip-weekly-footer';
-            const scorePart = scoreDelta == null ? '评分 —' : `评分 ${signedNumberText(scoreDelta, 2)}`;
-            const heatPart = popDelta == null ? '热度 —' : `热度 ${signedNumberText(popDelta, 0)}`;
-            foot.textContent = `较上周 ${scorePart} ${heatPart}`;
+            foot.appendChild(document.createTextNode('较上周 '));
+            appendWeeklyMetric(foot, '评分', scoreDelta, 2, '不变');
+            foot.appendChild(document.createTextNode(' '));
+            appendWeeklyMetric(foot, '热度', popDelta, 0, '不增');
             const tips = [];
             if (scoreDelta != null && prevScore != null) {
-                tips.push(`评分 ${fmtNum3(prevScore)} → ${fmtNum3(Number(prevScore) + Number(scoreDelta))}`);
+                const rounded = Math.round(Number(scoreDelta) * 100) / 100;
+                tips.push(rounded === 0 ? '评分不变'
+                    : `评分 ${fmtNum3(prevScore)} → ${fmtNum3(Number(prevScore) + rounded)}`);
             }
             if (popDelta != null) {
-                let s = `热度 ${signedNumberText(popDelta, 0)} 人`;
-                if (popPct != null) s += `（${signedNumberText(popPct, 1)}%）`;
-                tips.push(s);
+                if (Math.round(Number(popDelta)) === 0) {
+                    tips.push('热度不增');
+                } else {
+                    let s = `热度 ${signedNumberText(popDelta, 0)} 人`;
+                    if (popPct != null) s += `（${signedNumberText(popPct, 1)}%）`;
+                    tips.push(s);
+                }
             }
             if (tips.length) foot.title = tips.join('；');
             return foot;
